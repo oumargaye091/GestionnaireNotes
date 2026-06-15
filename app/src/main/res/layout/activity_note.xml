@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blanc">
+
+    <!-- Zone de saisie de la note -->
+    <LinearLayout
+        android:id="@+id/layoutNote"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:padding="16dp"
+        android:background="@drawable/bg_note">
+
+        <EditText
+            android:id="@+id/editTitre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Titre"
+            android:textColor="@color/blanc"
+            android:textColorHint="@color/blanc"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:background="@null"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/editContenu"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="Contenu..."
+            android:textColor="@color/blanc"
+            android:textColorHint="@color/blanc"
+            android:textSize="14sp"
+            android:background="@null"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+    <!-- 🎨 NOUVEAU : Palette de 6 couleurs -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp">
+
+        <View android:id="@+id/couleurVert"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_couleur_vert"/>
+
+        <View android:id="@+id/couleurRouge"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_couleur_rouge"/>
+
+        <View android:id="@+id/couleurBleu"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_couleur_bleu"/>
+
+        <View android:id="@+id/couleurJaune"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_couleur_jaune"/>
+
+        <View android:id="@+id/couleurOrange"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_couleur_orange"/>
+
+        <View android:id="@+id/couleurGris"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_couleur_gris"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSauvegarder"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="Créer"
+        android:textColor="@color/blanc"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_btn_sauvegarder"/>
+</LinearLayout>

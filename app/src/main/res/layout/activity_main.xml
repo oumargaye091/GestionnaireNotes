@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blanc">
+
+    <LinearLayout
+        android:id="@+id/layoutRecherche"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:layout_alignParentTop="true">
+
+        <EditText
+            android:id="@+id/editRecherche"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="Rechercher"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="@drawable/bg_recherche"
+            android:inputType="text"
+            android:imeOptions="actionSearch"/>
+
+        <Button
+            android:id="@+id/btnFavoris"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:text="Favoris"
+            android:textColor="@color/noir"
+            android:background="@drawable/bg_btn_favoris"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textAucuneNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aucune notes"
+        android:textSize="16sp"
+        android:textColor="@color/gris"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerNotes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/layoutRecherche"
+        android:layout_above="@+id/fabAjouter"
+        android:paddingBottom="16dp"/>
+
+    <!-- Palette de couleurs -->
+    <LinearLayout
+        android:id="@+id/layoutPalette"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="31dp"
+        android:layout_marginBottom="80dp"
+        android:visibility="gone">
+
+        <View android:id="@+id/btnVert"
+            android:layout_width="24dp" android:layout_height="24dp"
+            android:layout_margin="4dp" android:background="@drawable/bg_couleur_vert"/>
+        <View android:id="@+id/btnRouge"
+            android:layout_width="24dp" android:layout_height="24dp"
+            android:layout_margin="4dp" android:background="@drawable/bg_couleur_rouge"/>
+        <View android:id="@+id/btnBleu"
+            android:layout_width="24dp" android:layout_height="24dp"
+            android:layout_margin="4dp" android:background="@drawable/bg_couleur_bleu"/>
+        <View android:id="@+id/btnJaune"
+            android:layout_width="24dp" android:layout_height="24dp"
+            android:layout_margin="4dp" android:background="@drawable/bg_couleur_jaune"/>
+        <View android:id="@+id/btnOrange"
+            android:layout_width="24dp" android:layout_height="24dp"
+            android:layout_margin="4dp" android:background="@drawable/bg_couleur_orange"/>
+        <View android:id="@+id/btnGris"
+            android:layout_width="24dp" android:layout_height="24dp"
+            android:layout_margin="4dp" android:background="@drawable/bg_couleur_gris"/>
+
+    </LinearLayout>
+
+    <!-- Bouton flottant -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAjouter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/noir"
+        app:tint="@color/blanc"/>
+
+</RelativeLayout>
