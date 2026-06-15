@@ -3,9 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/blanc">
+    android:background="?android:colorBackground">
 
-    <!-- Zone de saisie de la note -->
     <LinearLayout
         android:id="@+id/layoutNote"
         android:layout_width="match_parent"
@@ -41,9 +40,10 @@
             android:inputType="textMultiLine"
             android:gravity="top"
             android:layout_marginTop="8dp"/>
+
     </LinearLayout>
 
-    <!-- 🎨 NOUVEAU : Palette de 6 couleurs -->
+    <!-- Palette de couleurs (modifier la couleur) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,45 +52,54 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp">
 
-        <View android:id="@+id/couleurVert"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_couleur_vert"/>
+        <View android:id="@+id/couleurVert"   android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="6dp" android:background="@drawable/bg_couleur_vert"/>
+        <View android:id="@+id/couleurRouge"  android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="6dp" android:background="@drawable/bg_couleur_rouge"/>
+        <View android:id="@+id/couleurBleu"   android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="6dp" android:background="@drawable/bg_couleur_bleu"/>
+        <View android:id="@+id/couleurJaune"  android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="6dp" android:background="@drawable/bg_couleur_jaune"/>
+        <View android:id="@+id/couleurOrange" android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="6dp" android:background="@drawable/bg_couleur_orange"/>
+        <View android:id="@+id/couleurGris"   android:layout_width="40dp" android:layout_height="40dp" android:layout_margin="6dp" android:background="@drawable/bg_couleur_gris"/>
 
-        <View android:id="@+id/couleurRouge"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_couleur_rouge"/>
-
-        <View android:id="@+id/couleurBleu"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_couleur_bleu"/>
-
-        <View android:id="@+id/couleurJaune"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_couleur_jaune"/>
-
-        <View android:id="@+id/couleurOrange"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_couleur_orange"/>
-
-        <View android:id="@+id/couleurGris"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_couleur_gris"/>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnSauvegarder"
+    <!-- Barre d'actions : Partager / Supprimer / Sauvegarder -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_margin="16dp"
-        android:text="Créer"
-        android:textColor="@color/blanc"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="@drawable/bg_btn_sauvegarder"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnPartager"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:text="Partager"
+            android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/btnSupprimer"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="6dp"
+            android:text="Supprimer"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btnSauvegarder"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1.4"
+            android:layout_marginStart="6dp"
+            android:text="Créer"
+            android:textColor="@color/blanc"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_btn_sauvegarder"/>
+
+    </LinearLayout>
+
 </LinearLayout>

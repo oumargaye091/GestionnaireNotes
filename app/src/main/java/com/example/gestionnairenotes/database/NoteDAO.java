@@ -18,7 +18,6 @@ public class NoteDAO {
         dbHelper = new DatabaseHelper(context);
     }
 
-    // CREATE - Ajouter une note
     public long ajouterNote(Note note) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -27,85 +26,67 @@ public class NoteDAO {
         values.put(DatabaseHelper.COLONNE_COULEUR, note.getCouleur());
         values.put(DatabaseHelper.COLONNE_FAVORI, note.isFavori() ? 1 : 0);
         values.put(DatabaseHelper.COLONNE_DATE, note.getDate());
-
         long id = db.insert(DatabaseHelper.TABLE_NOTES, null, values);
         db.close();
         return id;
     }
 
-    // READ - Récupérer toutes les notes
     public List<Note> getToutesLesNotes() {
-        List<Note> notes = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        return getNotesTriees("date");
+    }
 
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_NOTES,
-                null, null, null, null, null,
-                DatabaseHelper.COLONNE_DATE + " DESC"
-        );
-
-        if (cursor.moveToFirst()) {
-            do {
-                notes.add(cursorVersNote(cursor));
-            } while (cursor.moveToNext());
+    // Tri : "date" (défaut), "titre", "couleur"
+    public List<Note> getNotesTriees(String critere) {
+        String orderBy;
+        if ("titre".equals(critere)) {
+            orderBy = DatabaseHelper.COLONNE_TITRE + " COLLATE NOCASE ASC";
+        } else if ("couleur".equals(critere)) {
+            orderBy = DatabaseHelper.COLONNE_COULEUR + " ASC";
+        } else {
+            orderBy = DatabaseHelper.COLONNE_ID + " DESC";
         }
 
+        List<Note> notes = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DatabaseHelper.TABLE_NOTES,
+                null, null, null, null, null, orderBy);
+        if (cursor.moveToFirst()) {
+            do { notes.add(cursorVersNote(cursor)); } while (cursor.moveToNext());
+        }
         cursor.close();
         db.close();
         return notes;
     }
 
-    // READ - Récupérer uniquement les favoris
     public List<Note> getFavoris() {
         List<Note> notes = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_NOTES,
-                null,
-                DatabaseHelper.COLONNE_FAVORI + " = ?",
-                new String[]{"1"},
-                null, null,
-                DatabaseHelper.COLONNE_DATE + " DESC"
-        );
-
+        Cursor cursor = db.query(DatabaseHelper.TABLE_NOTES, null,
+                DatabaseHelper.COLONNE_FAVORI + " = ?", new String[]{"1"},
+                null, null, DatabaseHelper.COLONNE_ID + " DESC");
         if (cursor.moveToFirst()) {
-            do {
-                notes.add(cursorVersNote(cursor));
-            } while (cursor.moveToNext());
+            do { notes.add(cursorVersNote(cursor)); } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
         return notes;
     }
 
-    // READ - Rechercher par titre
     public List<Note> rechercherParTitre(String recherche) {
         List<Note> notes = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_NOTES,
-                null,
+        Cursor cursor = db.query(DatabaseHelper.TABLE_NOTES, null,
                 DatabaseHelper.COLONNE_TITRE + " LIKE ?",
                 new String[]{"%" + recherche + "%"},
-                null, null,
-                DatabaseHelper.COLONNE_DATE + " DESC"
-        );
-
+                null, null, DatabaseHelper.COLONNE_ID + " DESC");
         if (cursor.moveToFirst()) {
-            do {
-                notes.add(cursorVersNote(cursor));
-            } while (cursor.moveToNext());
+            do { notes.add(cursorVersNote(cursor)); } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
         return notes;
     }
 
-    // UPDATE - Modifier une note
     public int modifierNote(Note note) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -114,36 +95,38 @@ public class NoteDAO {
         values.put(DatabaseHelper.COLONNE_COULEUR, note.getCouleur());
         values.put(DatabaseHelper.COLONNE_FAVORI, note.isFavori() ? 1 : 0);
         values.put(DatabaseHelper.COLONNE_DATE, note.getDate());
-
-        int lignesMaj = db.update(
-                DatabaseHelper.TABLE_NOTES,
-                values,
+        int lignesMaj = db.update(DatabaseHelper.TABLE_NOTES, values,
                 DatabaseHelper.COLONNE_ID + " = ?",
-                new String[]{String.valueOf(note.getId())}
-        );
-
+                new String[]{String.valueOf(note.getId())});
         db.close();
         return lignesMaj;
     }
 
-    // UPDATE - Basculer favori
     public void basculerFavori(Note note) {
         note.setFavori(!note.isFavori());
         modifierNote(note);
     }
 
-    // DELETE - Supprimer une note
+    // BONUS - Suppression
     public void supprimerNote(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(
-                DatabaseHelper.TABLE_NOTES,
+        db.delete(DatabaseHelper.TABLE_NOTES,
                 DatabaseHelper.COLONNE_ID + " = ?",
-                new String[]{String.valueOf(id)}
-        );
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
-    // Utilitaire - Convertir un cursor en Note
+    // BONUS - Compteur
+    public int compterNotes() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_NOTES, null);
+        int count = 0;
+        if (cursor.moveToFirst()) count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return count;
+    }
+
     private Note cursorVersNote(Cursor cursor) {
         return new Note(
                 cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLONNE_ID)),

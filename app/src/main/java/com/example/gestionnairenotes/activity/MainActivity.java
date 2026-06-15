@@ -1,6 +1,7 @@
 package com.example.gestionnairenotes.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,40 +28,55 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private RecyclerView recyclerNotes;
     private NoteAdapter adapter;
     private NoteDAO noteDAO;
-    private TextView textAucuneNote;
+    private TextView textAucuneNote, textCompteur;
     private EditText editRecherche;
-    private Button btnFavoris;
+    private Button btnFavoris, btnTri, btnTheme;
     private FloatingActionButton fabAjouter;
     private boolean filtreActif = false;
 
+    // BONUS - Tri
+    private String[] tris = {"date", "titre", "couleur"};
+    private String[] trisLabels = {"Date", "Titre", "Couleur"};
+    private int triIndex = 0;
+
+    private static final String PREFS = "prefs_app";
+    private static final String KEY_THEME = "mode_sombre";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // BONUS - Mode sombre (à appliquer avant setContentView)
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        boolean sombre = prefs.getBoolean(KEY_THEME, false);
+        AppCompatDelegate.setDefaultNightMode(
+                sombre ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerNotes = findViewById(R.id.recyclerNotes);
-        textAucuneNote = findViewById(R.id.textAucuneNote);
-        editRecherche = findViewById(R.id.editRecherche);
-        btnFavoris = findViewById(R.id.btnFavoris);
-        fabAjouter = findViewById(R.id.fabAjouter);
+        recyclerNotes   = findViewById(R.id.recyclerNotes);
+        textAucuneNote  = findViewById(R.id.textAucuneNote);
+        textCompteur    = findViewById(R.id.textCompteur);
+        editRecherche   = findViewById(R.id.editRecherche);
+        btnFavoris      = findViewById(R.id.btnFavoris);
+        btnTri          = findViewById(R.id.btnTri);
+        btnTheme        = findViewById(R.id.btnTheme);
+        fabAjouter      = findViewById(R.id.fabAjouter);
 
         noteDAO = new NoteDAO(this);
         recyclerNotes.setLayoutManager(new LinearLayoutManager(this));
+        btnTheme.setText(sombre ? "☀️" : "🌙");
         chargerNotes();
 
-        // Recherche en temps réel
+        // Recherche
         editRecherche.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
+            public void onTextChanged(CharSequence s, int a, int b, int c) {
                 rechercherNotes(s.toString());
             }
-            @Override
             public void afterTextChanged(Editable s) {}
         });
 
-        // Bouton Favoris
+        // Favoris
         btnFavoris.setOnClickListener(v -> {
             filtreActif = !filtreActif;
             if (filtreActif) {
@@ -73,52 +90,49 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
             }
         });
 
-        // Bouton flottant
+        // BONUS - Tri (cycle date → titre → couleur)
+        btnTri.setOnClickListener(v -> {
+            triIndex = (triIndex + 1) % tris.length;
+            btnTri.setText("Tri: " + trisLabels[triIndex]);
+            if (filtreActif) afficherFavoris(); else chargerNotes();
+        });
+
+        // BONUS - Mode sombre
+        btnTheme.setOnClickListener(v -> {
+            boolean nouveau = !prefs.getBoolean(KEY_THEME, false);
+            prefs.edit().putBoolean(KEY_THEME, nouveau).apply();
+            AppCompatDelegate.setDefaultNightMode(
+                    nouveau ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+            recreate();
+        });
+
         fabAjouter.setOnClickListener(v -> afficherPalette());
 
-        // Clics sur les couleurs
-        findViewById(R.id.btnVert).setOnClickListener(v -> {
-            findViewById(R.id.layoutPalette).setVisibility(View.GONE);
-            ouvrirCreation("#219653");
-        });
-        findViewById(R.id.btnRouge).setOnClickListener(v -> {
-            findViewById(R.id.layoutPalette).setVisibility(View.GONE);
-            ouvrirCreation("#EB5757");
-        });
-        findViewById(R.id.btnBleu).setOnClickListener(v -> {
-            findViewById(R.id.layoutPalette).setVisibility(View.GONE);
-            ouvrirCreation("#2F80ED");
-        });
-        findViewById(R.id.btnJaune).setOnClickListener(v -> {
-            findViewById(R.id.layoutPalette).setVisibility(View.GONE);
-            ouvrirCreation("#F2C94C");
-        });
-        findViewById(R.id.btnOrange).setOnClickListener(v -> {
-            findViewById(R.id.layoutPalette).setVisibility(View.GONE);
-            ouvrirCreation("#F2994A");
-        });
-        findViewById(R.id.btnGris).setOnClickListener(v -> {
-            findViewById(R.id.layoutPalette).setVisibility(View.GONE);
-            ouvrirCreation("#828282");
-        });
+        findViewById(R.id.btnVert).setOnClickListener(v   -> { masquerPalette(); ouvrirCreation("#219653"); });
+        findViewById(R.id.btnRouge).setOnClickListener(v  -> { masquerPalette(); ouvrirCreation("#EB5757"); });
+        findViewById(R.id.btnBleu).setOnClickListener(v   -> { masquerPalette(); ouvrirCreation("#2F80ED"); });
+        findViewById(R.id.btnJaune).setOnClickListener(v  -> { masquerPalette(); ouvrirCreation("#F2C94C"); });
+        findViewById(R.id.btnOrange).setOnClickListener(v -> { masquerPalette(); ouvrirCreation("#F2994A"); });
+        findViewById(R.id.btnGris).setOnClickListener(v   -> { masquerPalette(); ouvrirCreation("#828282"); });
     }
 
     private void chargerNotes() {
-        List<Note> notes = noteDAO.getToutesLesNotes();
-        afficherListe(notes);
+        afficherListe(noteDAO.getNotesTriees(tris[triIndex]));
     }
 
     private void afficherFavoris() {
-        List<Note> favoris = noteDAO.getFavoris();
-        afficherListe(favoris);
+        afficherListe(noteDAO.getFavoris());
     }
 
     private void rechercherNotes(String texte) {
-        List<Note> notes = noteDAO.rechercherParTitre(texte);
-        afficherListe(notes);
+        afficherListe(noteDAO.rechercherParTitre(texte));
     }
 
     private void afficherListe(List<Note> notes) {
+        // BONUS - Compteur (toujours total)
+        int total = noteDAO.compterNotes();
+        textCompteur.setText(total <= 1 ? total + " note" : total + " notes");
+
         if (notes.isEmpty()) {
             recyclerNotes.setVisibility(View.GONE);
             textAucuneNote.setVisibility(View.VISIBLE);
@@ -136,11 +150,11 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     private void afficherPalette() {
         View palette = findViewById(R.id.layoutPalette);
-        if (palette.getVisibility() == View.VISIBLE) {
-            palette.setVisibility(View.GONE);
-        } else {
-            palette.setVisibility(View.VISIBLE);
-        }
+        palette.setVisibility(palette.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+    }
+
+    private void masquerPalette() {
+        findViewById(R.id.layoutPalette).setVisibility(View.GONE);
     }
 
     private void ouvrirCreation(String couleur) {
@@ -160,20 +174,12 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
     @Override
     public void onNoteDoubleClick(Note note) {
         noteDAO.basculerFavori(note);
-        if (filtreActif) {
-            afficherFavoris();
-        } else {
-            chargerNotes();
-        }
+        if (filtreActif) afficherFavoris(); else chargerNotes();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (filtreActif) {
-            afficherFavoris();
-        } else {
-            chargerNotes();
-        }
+        if (filtreActif) afficherFavoris(); else chargerNotes();
     }
 }
