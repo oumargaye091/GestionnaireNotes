@@ -1,6 +1,7 @@
 # 📝 GestionnaireNotes
 
-Une application Android pour gérer vos notes facilement.
+Une application Android pour gérer vos notes facilement et efficacement
+.
 
 ## 📱 Fonctionnalités
 - Créer des notes
